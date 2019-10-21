@@ -97,6 +97,10 @@ figlet('Link', (err, data) => {
         data.title = document.getElementsByTagName('title')[0].innerHTML;
         _.forEach(document.getElementsByTagName('a'), (item) => {
           let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : "");
+          if (href.charAt(0) == "/") {
+            href = ctx.query.url + href;
+          }
+          href = href.trim();
           if (href) {
             let domain = (extractDomain(href) ? extractDomain(href) : baseDomain);
             let type = link.type(href, baseDomain);
