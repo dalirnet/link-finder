@@ -10,7 +10,9 @@
   "author": "AmirRezaDalir",
   "license": "ISC",
   "dependencies": {
+    "extract-domain": "^2.2.1",
     "figlet": "^1.2.3",
+    "handlebars": "^4.4.5",
     "jsdom": "^15.1.1",
     "lodash": "^4.17.14",
     "minimist": "^1.2.0",

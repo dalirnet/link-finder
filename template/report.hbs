@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>𝗟ink 𝗙inder</title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+</head>
+</head>
+
+<body>
+    <div class="main">
+        <div class="box">
+            <form action="/fetch" method="GET">
+                <input type="url" name="url" value="{{url}}" placeholder="Http://" autocomplete="off" required>
+                <input type="submit" value="Fetch">
+            </form>
+            <div class="report">
+                <p id="top" class="title" style="text-align: center;">{{title}}</p>
+                <a href="#internal" class="btn" style="background: #4fa20f;color: #fff;">
+                    <span>Internal Link - {{count.link.internal}}</span>
+                </a>
+                <a href="#link" class="btn" style="background: #0fa29b;color: #fff;">
+                    <span>Links Repeate - {{count.repeat.link}}</span>
+                </a>
+                <a href="#anchor" class="btn" style="background: #93a20f;color: #fff;">
+                    <span>Anchors Repeate - {{count.repeat.anchor}}</span>
+                </a>
+                <a href="#external" class="btn" style="background: #0f5ea2;color: #fff;">
+                    <span>External Link - {{count.link.external}}</span>
+                </a>
+                <a href="#social" class="btn" style="background: #a28c0f;color: #fff;">
+                    <span>Social Link - {{count.link.social}}</span>
+                </a>
+                <a href="#void" class="btn" style="background: #a20f0f;color: #fff;">
+                    <span>Void Link - {{count.link.void}}</span>
+                </a>
+                <a href="#domain" class="btn" style="background: #999;color: #fff;">
+                    <span>External Domains - {{count.domain}}</span>
+                </a>
+                <p id="internal" class="title" style="border-bottom: solid 4px #4fa20f;">
+                    <span>Internal</span>
+                    <span>{{count.link.internal}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each link.internal}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{anchor}}</span>
+                            <span class="rel">({{rel}})</span>
+                        </span>
+                        <hr>
+                        <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="link" class="title" style="border-bottom: solid 4px #0fa29b;">
+                    <span>Links Repeated More Than 3</span>
+                    <span>{{count.repeat.link}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each repeat.link}}
+                    <div class="link">
+                        <span class="anchor">{{this}}</span>
+                        <hr>
+                        <span class="href">{{@key}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="anchor" class="title" style="border-bottom: solid 4px #93a20f;">
+                    <span>Anchors Repeated More Than 2</span>
+                    <span>{{count.repeat.anchor}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each repeat.anchor}}
+                    <div class="link">
+                        <span class="anchor">{{this}}</span>
+                        <hr>
+                        <span class="href">{{@key}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="external" class="title" style="border-bottom: solid 4px #0f5ea2;">
+                    <span>External</span>
+                    <span>{{count.link.external}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each link.external}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{anchor}}</span>
+                            <span class="rel">({{rel}})</span>
+                        </span>
+                        <hr>
+                        <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="social" class="title" style="border-bottom: solid 4px #a28c0f;">
+                    <span>Social</span>
+                    <span>{{count.link.social}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each link.social}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{anchor}}</span>
+                            <span class="rel">({{rel}})</span>
+                        </span>
+                        <hr>
+                        <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="void" class="title" style="border-bottom: solid 4px #a20f0f;">
+                    <span>Void</span>
+                    <span>{{count.link.void}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each link.void}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{anchor}}</span>
+                            <span class="rel">({{rel}})</span>
+                        </span>
+                        <hr>
+                        <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="domain" class="title" style="border-bottom: solid 4px #999;">
+                    <span>External Domains</span>
+                    <span>{{count.domain}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each domain}}
+                    <div class="link">
+                        <span class="anchor">{{this}}</span>
+                        <hr>
+                        <span class="href">{{@key}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/script.js"></script>
+</body>
+
+</html>
