@@ -1,0 +1,32 @@
+{
+  "name": "link-finder",
+  "version": "1.0.0",
+  "description": "page links",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js --debug 0 --port 8085",
+    "debug": "nodemon server.js --debug 1 --port 8085"
+  },
+  "author": "AmirRezaDalir",
+  "license": "ISC",
+  "dependencies": {
+    "figlet": "^1.2.3",
+    "jsdom": "^15.1.1",
+    "lodash": "^4.17.14",
+    "minimist": "^1.2.0",
+    "open": "^6.4.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "server": "^1.0.19"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "nodemon": "^1.19.4"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "public/*",
+      "template/*"
+    ]
+  }
+}
