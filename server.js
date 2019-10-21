@@ -98,7 +98,7 @@ figlet('Link', (err, data) => {
         _.forEach(document.getElementsByTagName('a'), (item) => {
           let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : "");
           if (href.charAt(0) == "/") {
-            href = ctx.query.url + href;
+            href = ctx.query.url.replace(/^\/|\/$/g, '') + href;
           }
           href = href.trim();
           if (href) {
