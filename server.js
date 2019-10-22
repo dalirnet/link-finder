@@ -19,6 +19,18 @@ const args = require('minimist')(process.argv.slice(2), {
   }
 });
 
+const socialLink = [
+  'facebook.com',
+  'instagram.com',
+  'google.com',
+  'youtube.com',
+  'aparat.com',
+  'twitter.com',
+  't.me',
+  'telegram.me',
+  'linkedin.com',
+  'github.com'
+];
 const link = {
   type(link, baseDomain) {
     // [internal,external,social,void]
@@ -26,26 +38,32 @@ const link = {
       return 'void';
     } else {
       let domain = extractDomain(link);
-      if (_.indexOf(['facebook.com', 'instagram.com', 'google.com', 'aparat.com', 'twitter.com', 't.me', 'telegram.me'], domain) > -1) {
+      if (_.indexOf(socialLink, domain) !== -1) {
         return 'social';
       } else if (domain != baseDomain) {
         return 'external';
       }
     }
+    if (link.match(/(\.jpg|\.png|\.gif|\.webp|\.svg)/g)) {
+      return 'image';
+    }
 
     return 'internal';
   },
   anchor(html) {
-    let anchor = "";
+    let anchor = '';
     _.forEach(html.getElementsByTagName('img'), (img) => {
-      if (img.getAttribute("alt")) {
-        anchor = img.getAttribute("alt");
+      if (img.getAttribute('alt')) {
+        anchor = img.getAttribute('alt');
         return false;
       }
     });
-    if (anchor == "") {
-      if (html.getAttribute("title")) {
-        anchor = html.getAttribute("title");
+    if (anchor == '') {
+      if (html.getAttribute('alt')) {
+        anchor = html.getAttribute('alt');
+      }
+      else if (html.getAttribute('title')) {
+        anchor = html.getAttribute('title');
       } else {
         anchor = html.textContent;
       }
@@ -82,7 +100,8 @@ figlet('Link', (err, data) => {
           internal: [],
           external: [],
           social: [],
-          void: []
+          void: [],
+          image: []
         },
         domain: [],
         repeat: {
@@ -96,8 +115,8 @@ figlet('Link', (err, data) => {
         // parse page
         data.title = document.getElementsByTagName('title')[0].innerHTML;
         _.forEach(document.getElementsByTagName('a'), (item) => {
-          let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : "");
-          if (href.charAt(0) == "/") {
+          let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : '');
+          if (href.charAt(0) == '/') {
             href = ctx.query.url.replace(/^\/|\/$/g, '') + href;
           }
           href = href.trim();
@@ -108,24 +127,35 @@ figlet('Link', (err, data) => {
             let rel = link.rel(item.getAttribute('rel'));
             //
             data.link[type].push({ href, domain, anchor, rel });
-            if (type == "external") {
+            if (type == 'external') {
               data.domain.push(domain);
             }
-            if (type == "internal") {
+            if (type == 'internal' || type == 'image') {
               data.repeat.link.push(href);
               data.repeat.anchor.push(anchor);
             }
           }
         });
+        _.forEach(document.getElementsByTagName('img'), (item) => {
+          let src = decodeURI(item.getAttribute('data-src') ? item.getAttribute('data-src') : (item.getAttribute('src') ? item.getAttribute('src') : ''));
+          if (src.charAt(0) == '/') {
+            src = ctx.query.url.replace(/^\/|\/$/g, '') + src;
+          }
+          src = src.trim();
+          if (src) {
+            data.link['image'].push({ href: src, anchor: link.anchor(item) });
+          }
+        });
         data.domain = _.countBy(data.domain);
         data.repeat.link = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.repeat.link), (v, i) => { return v > 2 })), 1)));
-        data.repeat.anchor = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.repeat.anchor), (v, i) => { return v > 1 })), 1)));
+        data.repeat.anchor = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.repeat.anchor), (v, i) => { return v > 2 })), 1)));
         data.count = {
           link: {
             internal: data.link.internal.length,
             external: data.link.external.length,
             social: data.link.social.length,
-            void: data.link.void.length
+            void: data.link.void.length,
+            image: data.link.image.length
           },
           domain: _.size(data.domain),
           repeat: {
@@ -136,7 +166,7 @@ figlet('Link', (err, data) => {
         return render('report.hbs', data);
       }).catch((err) => {
         console.error(err.message);
-        return render('form.hbs', { error: "خطا!" });
+        return render('form.hbs', { error: 'خطا!' });
       });
     })
   ]);

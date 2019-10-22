@@ -35,6 +35,9 @@
                 <a href="#void" class="btn" style="background: #a20f0f;color: #fff;">
                     <span>Void Link - {{count.link.void}}</span>
                 </a>
+                <a href="#image" class="btn" style="background: #890fa2;color: #fff;">
+                    <span>Image - {{count.link.image}}</span>
+                </a>
                 <a href="#domain" class="btn" style="background: #999;color: #fff;">
                     <span>External Domains - {{count.domain}}</span>
                 </a>
@@ -131,6 +134,22 @@
                         </span>
                         <hr>
                         <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="image" class="title" style="border-bottom: solid 4px #890fa2;">
+                    <span>Image</span>
+                    <span>{{count.link.image}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each link.image}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{anchor}}</span>
+                        </span>
+                        <hr>
+                        <span class="href">{{href}}</a>
                     </div>
                     {{/each}}
                 </div>

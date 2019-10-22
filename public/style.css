@@ -100,6 +100,7 @@ a.link:hover {
 }
 
 .link {
+    position: relative;
     display: inline-block;
     padding: 10px;
     margin: 5px;
@@ -108,6 +109,8 @@ a.link:hover {
     min-width: 150px;
     min-height: 70px;
     vertical-align: middle;
+    max-width: 350px;
+    overflow: hidden;
 }
 
 a.link {
@@ -125,10 +128,14 @@ a.link span {
 }
 
 .anchor {
+    position: relative;
     display: block;
     direction: rtl;
     text-align: right;
     min-height: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .anchor span:first-child:empty {
@@ -144,10 +151,15 @@ a.link span {
     direction: ltr;
     text-align: left;
     min-height: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .rel {
+    position: absolute;
+    left: 0;
     font-weight: bold;
-    float: left;
-    margin-right: 10px;
+    background: #fff;
+    padding-right: 5px;
 }
