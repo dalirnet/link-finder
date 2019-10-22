@@ -113,7 +113,12 @@ figlet('Link', (err, data) => {
       };
       return request.get(encodeURI(ctx.query.url)).then((html) => {
         const baseDomain = extractDomain(ctx.query.url);
-        const baseUrl = ctx.query.url.match(/((http|https):\/\/)[^\/]+\//ig)[0].replace(/^\/|\/$/g, '');
+        let baseUrl = ctx.query.url;
+        let matchBaseUrl = baseUrl.match(/((http|https):\/\/)[^\/]+\//ig);
+        if (matchBaseUrl) {
+          baseUrl = matchBaseUrl[0];
+        }
+        baseUrl = baseUrl.replace(/^\/|\/$/g, '');
         const { document } = (new JSDOM(html)).window;
         // parse page
         data.title = document.getElementsByTagName('title')[0].innerHTML;
@@ -152,7 +157,7 @@ figlet('Link', (err, data) => {
           }
         });
         let content = document.getElementsByTagName('body')[0].innerHTML;
-        content = content.replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, '').replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, '');
+        content = content.replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, '').replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, '').replace(/<!--(.*?)-->/g, '');
         content = content.replace(/[^abcdefghijklmnopqrstuvwxyzضصثقفغعهخحجچپشسیبلاآتنمکگظطزرذدئو\-\_\@\#\<\>]/gi, ' ');
         content = content.replace(/<.*?>/g, '====').replace(/\s\s+/g, ' ').replace(/=\s=/g, '==').replace(/==+/g, ' <> ');
         let allWords = [];
@@ -189,12 +194,14 @@ figlet('Link', (err, data) => {
             image: data.link.image.length
           },
           words: _.size(data.words),
+          density: 0,
           domain: _.size(data.domain),
           repeat: {
             link: _.size(data.repeat.link),
             anchor: _.size(data.repeat.anchor)
           }
         };
+        data.count.density = Math.floor((data.count.words * 100) / allWords.length);
         return render('report.hbs', data);
       }).catch((err) => {
         console.error(err.message);
