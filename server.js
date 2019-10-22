@@ -111,7 +111,13 @@ figlet('Link', (err, data) => {
           anchor: []
         }
       };
-      return request.get(encodeURI(ctx.query.url)).then((html) => {
+      var options = {
+        uri: encodeURI(ctx.query.url),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)'
+        }
+      };
+      return request(options).then((html) => {
         const baseDomain = extractDomain(ctx.query.url);
         let baseUrl = ctx.query.url;
         let matchBaseUrl = baseUrl.match(/((http|https):\/\/)[^\/]+\//ig);
