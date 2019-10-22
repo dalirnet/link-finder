@@ -18,6 +18,7 @@ const args = require('minimist')(process.argv.slice(2), {
     port: 8085
   }
 });
+const ignoreWords = require('./keyword.ignore.json');
 
 const socialLink = [
   'facebook.com',
@@ -104,6 +105,7 @@ figlet('Link', (err, data) => {
           image: []
         },
         domain: [],
+        words: [],
         repeat: {
           link: [],
           anchor: []
@@ -111,13 +113,15 @@ figlet('Link', (err, data) => {
       };
       return request.get(encodeURI(ctx.query.url)).then((html) => {
         const baseDomain = extractDomain(ctx.query.url);
+        const baseUrl = ctx.query.url.match(/((http|https):\/\/)[^\/]+\//ig)[0].replace(/^\/|\/$/g, '');
         const { document } = (new JSDOM(html)).window;
         // parse page
         data.title = document.getElementsByTagName('title')[0].innerHTML;
-        _.forEach(document.getElementsByTagName('a'), (item) => {
+        let aTag = document.getElementsByTagName('a');
+        _.forEach(aTag, (item) => {
           let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : '');
           if (href.charAt(0) == '/') {
-            href = ctx.query.url.replace(/^\/|\/$/g, '') + href;
+            href = baseUrl + href;
           }
           href = href.trim();
           if (href) {
@@ -136,7 +140,8 @@ figlet('Link', (err, data) => {
             }
           }
         });
-        _.forEach(document.getElementsByTagName('img'), (item) => {
+        let imgTag = document.getElementsByTagName('img');
+        _.forEach(imgTag, (item) => {
           let src = decodeURI(item.getAttribute('data-src') ? item.getAttribute('data-src') : (item.getAttribute('src') ? item.getAttribute('src') : ''));
           if (src.charAt(0) == '/' && src != '/') {
             src = ctx.query.url.replace(/^\/|\/$/g, '') + src;
@@ -146,9 +151,35 @@ figlet('Link', (err, data) => {
             data.link['image'].push({ href: src, anchor: link.anchor(item) });
           }
         });
+        let content = document.getElementsByTagName('body')[0].innerHTML;
+        content = content.replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, '').replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, '');
+        content = content.replace(/[^abcdefghijklmnopqrstuvwxyzضصثقفغعهخحجچپشسیبلاآتنمکگظطزرذدئو\-\_\@\#\<\>]/gi, ' ');
+        content = content.replace(/<.*?>/g, '====').replace(/\s\s+/g, ' ').replace(/=\s=/g, '==').replace(/==+/g, ' <> ');
+        let allWords = [];
+        _.forEach(content.split(' '), (item) => {
+          if (item.length > 1 && _.indexOf(ignoreWords, item) === -1) {
+            allWords.push(item);
+          }
+        });
+        _.forEach(allWords, (word, key) => {
+          if (word != '<>') {
+            data.words.push(word);
+            if (typeof (allWords[key + 1]) !== 'undefined') {
+              if (allWords[key + 1] != '<>') {
+                data.words.push(word + ' ' + allWords[key + 1]);
+                if (typeof (allWords[key + 2]) !== 'undefined') {
+                  if (allWords[key + 2] != '<>') {
+                    data.words.push(word + ' ' + allWords[key + 1] + ' ' + allWords[key + 2]);
+                  }
+                }
+              }
+            }
+          }
+        });
         data.domain = _.countBy(data.domain);
         data.repeat.link = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.repeat.link), (v, i) => { return v > 2 })), 1)));
         data.repeat.anchor = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.repeat.anchor), (v, i) => { return v > 2 })), 1)));
+        data.words = _.fromPairs(_.reverse(_.sortBy(_.toPairs(_.pickBy(_.countBy(data.words), (v, i) => { return v > 2 })), 1)));
         data.count = {
           link: {
             internal: data.link.internal.length,
@@ -157,6 +188,7 @@ figlet('Link', (err, data) => {
             void: data.link.void.length,
             image: data.link.image.length
           },
+          words: _.size(data.words),
           domain: _.size(data.domain),
           repeat: {
             link: _.size(data.repeat.link),

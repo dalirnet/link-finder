@@ -20,6 +20,9 @@
                 <a href="#internal" class="btn" style="background: #4fa20f;color: #fff;">
                     <span>Internal Link - {{count.link.internal}}</span>
                 </a>
+                <a href="#words" class="btn" style="background: #bd6705;color: #fff;">
+                    <span>Keywords - {{count.words}}</span>
+                </a>
                 <a href="#link" class="btn" style="background: #0fa29b;color: #fff;">
                     <span>Links Repeate - {{count.repeat.link}}</span>
                 </a>
@@ -55,6 +58,22 @@
                         </span>
                         <hr>
                         <a href="/fetch?url={{href}}" class="href">{{href}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+                <p id="words" class="title" style="border-bottom: solid 4px #bd6705;">
+                    <span>Keywords</span>
+                    <span>{{count.words}}</span>
+                </p>
+                <div class="links">
+                    <a href="#top" class="link"><span>Top</span></a>
+                    {{#each words}}
+                    <div class="link">
+                        <span class="anchor">
+                            <span>{{this}}</span>
+                        </span>
+                        <hr>
+                        <span class="href">{{@key}}</span>
                     </div>
                     {{/each}}
                 </div>
