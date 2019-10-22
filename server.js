@@ -138,7 +138,7 @@ figlet('Link', (err, data) => {
         });
         _.forEach(document.getElementsByTagName('img'), (item) => {
           let src = decodeURI(item.getAttribute('data-src') ? item.getAttribute('data-src') : (item.getAttribute('src') ? item.getAttribute('src') : ''));
-          if (src.charAt(0) == '/') {
+          if (src.charAt(0) == '/' && src != '/') {
             src = ctx.query.url.replace(/^\/|\/$/g, '') + src;
           }
           src = src.trim();
