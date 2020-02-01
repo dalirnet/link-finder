@@ -79,6 +79,15 @@ const link = {
   }
 };
 
+const convert = (input) => {
+  input = input.toString();
+  var number = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  for (var i = 0; i < 10; i++) {
+    input = input.replace(new RegExp(number[i], "g"), i);
+  }
+  return input.toString();
+}
+
 figlet('Link', (err, data) => {
   if (!err && !args.debug) {
     console.log(data);
@@ -130,7 +139,12 @@ figlet('Link', (err, data) => {
         data.title = document.getElementsByTagName('title')[0].innerHTML;
         let aTag = document.getElementsByTagName('a');
         _.forEach(aTag, (item) => {
-          let href = decodeURI(item.getAttribute('href') ? item.getAttribute('href') : '');
+          let _href = (item.getAttribute('href') ? item.getAttribute('href') : '');
+          let _convertHref = convert(_href);
+          if (_href != _convertHref) {
+            console.error("LinkError: " + _href);
+          }
+          let href = decodeURI(_convertHref);
           if (href.charAt(0) == '/') {
             href = baseUrl + href;
           }
@@ -210,7 +224,7 @@ figlet('Link', (err, data) => {
         data.count.density = Math.floor((data.count.words * 100) / allWords.length);
         return render('report.hbs', data);
       }).catch((err) => {
-        console.error(err.message);
+        console.error(err);
         return render('form.hbs', { error: 'خطا!' });
       });
     })
