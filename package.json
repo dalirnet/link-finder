@@ -15,7 +15,7 @@
     "handlebars": "^4.4.5",
     "jsdom": "^15.1.1",
     "lodash": "^4.17.14",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "open": "^6.4.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
